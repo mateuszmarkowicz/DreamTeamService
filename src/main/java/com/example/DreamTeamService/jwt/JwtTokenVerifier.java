@@ -1,4 +1,4 @@
-package com.example.ChatDatabaseApp.jwt;
+package com.example.DreamTeamService.jwt;
 
 import com.google.common.base.Strings;
 import io.jsonwebtoken.Claims;

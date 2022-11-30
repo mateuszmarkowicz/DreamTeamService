@@ -1,14 +1,10 @@
-package com.example.ChatDatabaseApp.users;
+package com.example.DreamTeamService.users;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Repository
 public class UserRepository {

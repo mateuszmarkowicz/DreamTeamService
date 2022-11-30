@@ -1,4 +1,4 @@
-package com.example.ChatDatabaseApp.jwt;
+package com.example.DreamTeamService.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;

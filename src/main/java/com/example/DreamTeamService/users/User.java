@@ -1,9 +1,8 @@
-package com.example.ChatDatabaseApp.users;
+package com.example.DreamTeamService.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Data
 @NoArgsConstructor

@@ -1,4 +1,4 @@
-package com.example.ChatDatabaseApp.security;
+package com.example.DreamTeamService.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

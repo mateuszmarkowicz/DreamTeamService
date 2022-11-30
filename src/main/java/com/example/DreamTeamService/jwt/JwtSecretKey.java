@@ -1,4 +1,4 @@
-package com.example.ChatDatabaseApp.jwt;
+package com.example.DreamTeamService.jwt;
 
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
