@@ -20,7 +20,7 @@ public class UserRepository {
     public boolean register(User user) throws DataIntegrityViolationException{
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            int insertUser =  jdbcTemplate.update("INSERT INTO users(username, password, enabled) VALUES(?,?,?)", user.getUsername(), user.getPassword(), 1);
+            int insertUser =  jdbcTemplate.update("INSERT INTO users(username, password, enabled, email) VALUES(?,?,?,?)", user.getUsername(), user.getPassword(), 1, user.getEmail());
             int insertAuth = jdbcTemplate.update("INSERT INTO authorities(username, authority) VALUES(?,?)", user.getUsername(),"ROLE_USER");
 
 

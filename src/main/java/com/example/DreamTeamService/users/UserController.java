@@ -7,14 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/users")
 @CrossOrigin
 public class UserController {
 
     @Autowired
     UserRepository userRepository;
 
-    @PostMapping("")
+    @PostMapping("/register")
     public boolean register(@RequestBody User user, HttpServletResponse response){
         boolean isRegisterDone = userRepository.register(user);
         if(isRegisterDone){
@@ -40,11 +39,4 @@ public class UserController {
         return "Test2";
     }
 
-//    @RequestMapping(value = "/name", method = RequestMethod.GET)
-//    public String getName(Authentication authentication, Principal principal) {
-//        System.out.println(authentication.getName());
-//        System.out.println("-----------------");
-//        System.out.println(principal.getName());
-//        return "";
-//    }
 }
