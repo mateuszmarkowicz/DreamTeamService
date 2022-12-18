@@ -22,7 +22,8 @@ public class UserController {
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
     @Autowired
-    public UserController(SecretKey secretKey, JwtConfig jwtConfig) {
+    public UserController(SecretKey secretKey, JwtConfig jwtConfig, UserRepository userRepository) {
+        this.userRepository = userRepository;
         this.secretKey = secretKey;
         this.jwtConfig = jwtConfig;
     }
