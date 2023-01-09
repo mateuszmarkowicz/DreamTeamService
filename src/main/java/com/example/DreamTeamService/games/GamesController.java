@@ -1,10 +1,8 @@
 package com.example.DreamTeamService.games;
 
+import com.example.DreamTeamService.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,5 +17,10 @@ public class GamesController {
     @GetMapping("")
     List<Game> getGames() {
         return gamesRepository.getGames();
+    }
+
+    @GetMapping("/{username}")
+    public List<GamesForUser> getUserGames(@PathVariable("username") String username){
+        return gamesRepository.getUserGames(username);
     }
 }

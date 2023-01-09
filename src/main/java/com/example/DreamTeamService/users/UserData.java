@@ -9,10 +9,12 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserData {
     private String username;
-    private String password;
     private String email;
-    private int enabled;
+    public String description;
+    public String dateOfBirth;
+    private List<String> languages;
+    private List<Socials> socials;
 
 }

@@ -54,6 +54,11 @@ public class UserController {
         }
     }
 
+    @GetMapping("/users/{username}")
+    public UserData getUserData(@PathVariable("username") String username){
+        return userRepository.getUserData(username);
+    }
+
     @GetMapping("test")
     public String userTest() {
         return "Test";
