@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 @Data
@@ -16,5 +17,6 @@ public class UserData {
     public String dateOfBirth;
     private List<String> languages;
     private List<Socials> socials;
+    private String profilePicture;
 
 }

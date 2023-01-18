@@ -10,7 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -54,10 +58,37 @@ public class UserController {
         }
     }
 
+
+//    @GetMapping("/users/images/{username}")
+//    public String getUserImage(@PathVariable String username){
+//        try {
+//            BufferedImage bImage = ImageIO.read(new File("src/main/resources/static/usersProfilePictures/"+username+".jpg"));
+//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//            ImageIO.write(bImage, "jpg", bos);
+//            byte[] data = bos.toByteArray();
+//            return Base64.getEncoder().encodeToString(data);
+//        }catch (Exception e){
+//            return  null;
+//        }
+//    }
+
+
     @GetMapping("/users/{username}")
     public UserData getUserData(@PathVariable("username") String username){
         return userRepository.getUserData(username);
     }
+
+    @PatchMapping("/users")
+    public boolean addUserData(@RequestBody UserData userData){
+            Object tokenUsername = SecurityContextHolder.getContext().getAuthentication()
+                    .getPrincipal();
+            if(userData.getUsername().equals(tokenUsername)) {
+                return userRepository.addUserData(userData);
+            }else{
+                return false;
+            }
+    }
+
 
     @GetMapping("test")
     public String userTest() {
