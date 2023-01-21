@@ -6,17 +6,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
 
 @Repository
 public class UserRepository {
@@ -45,33 +34,90 @@ public class UserRepository {
     public UserData getUserData(String username) {
         UserData userData =  jdbcTemplate.queryForObject("SELECT username, email, description, date_of_birth FROM users WHERE username=?", BeanPropertyRowMapper.newInstance((UserData.class)), username);
         userData.setLanguages(jdbcTemplate.queryForList("SELECT l.name FROM users u INNER JOIN languages_users lu ON lu.username = u.username  INNER JOIN languages l ON lu.language_id=l.id WHERE u.username=?",String.class, username));
-        userData.setSocials(jdbcTemplate.query("SELECT s.name, su.link FROM users u INNER JOIN socials_users su ON su.username = u.username  INNER JOIN socials s ON su.social_id=s.id WHERE u.username=?", BeanPropertyRowMapper.newInstance((Socials.class)), username));
+        userData.setSocials(jdbcTemplate.query("SELECT s.name, su.link FROM users u INNER JOIN socials_users su ON su.username = u.username  INNER JOIN socials s ON su.social_id=s.id WHERE u.username=?", BeanPropertyRowMapper.newInstance((Social.class)), username));
         if(userData.getSocials().isEmpty()) userData.setSocials(null);
         if(userData.getLanguages().isEmpty()) userData.setLanguages(null);
-        try {
-            BufferedImage bImage = ImageIO.read(new File("src/main/resources/static/usersProfilePictures/"+username+".jpg"));
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ImageIO.write(bImage, "jpg", bos);
-            byte[] data = bos.toByteArray();
-            userData.setProfilePicture(Base64.getEncoder().encodeToString(data));
-        }catch (IIOException e){
-            try {
-                BufferedImage bImage = ImageIO.read(new File("src/main/resources/static/usersProfilePictures/default.jpg"));
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "jpg", bos);
-                byte[] data = bos.toByteArray();
-                userData.setProfilePicture(Base64.getEncoder().encodeToString(data));
-            }catch (Exception ex){
-                System.out.println(ex);
-            }
-        } catch (Exception e){
-            System.out.println(e);
-        }
+//        try {
+//            BufferedImage bImage = ImageIO.read(new File("src/main/resources/static/usersProfilePictures/"+username+".jpg"));
+//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//            ImageIO.write(bImage, "jpg", bos);
+//            byte[] data = bos.toByteArray();
+//            userData.setProfilePicture(Base64.getEncoder().encodeToString(data));
+//        }catch (IIOException e){
+//            try {
+//                BufferedImage bImage = ImageIO.read(new File("src/main/resources/static/usersProfilePictures/default.jpg"));
+//                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//                ImageIO.write(bImage, "jpg", bos);
+//                byte[] data = bos.toByteArray();
+//                userData.setProfilePicture(Base64.getEncoder().encodeToString(data));
+//            }catch (Exception ex){
+//                System.out.println(ex);
+//            }
+//        } catch (Exception e){
+//            System.out.println(e);
+//        }
         return  userData;
     }
 
-    public boolean addUserData(UserData userData) {
-        //TODO
-        return true;
+    public boolean updateUserEmail(String username, String email){
+        try {
+            jdbcTemplate.update("UPDATE users SET email=? WHERE username=?",email, username);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean updateUserDescription(String username, String description) {
+        try {
+            jdbcTemplate.update("UPDATE users SET description=? WHERE username=?",description, username);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean updateUserDateOfBirth(String username, String dateOfBirth) {
+        try {
+            jdbcTemplate.update("UPDATE users SET date_of_birth=? WHERE username=?", dateOfBirth, username);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean addUserSocial(String username, Social social) {
+        try {
+            jdbcTemplate.update("INSERT INTO socials_users(username, social_id, link) VALUES(?,(SELECT id FROM socials WHERE name=?),?)", username, social.getName(), social.getLink());
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public boolean addUserLanguage(String username, String language) {
+        try {
+            jdbcTemplate.update("INSERT INTO languages_users(username, language_id) VALUES(?,(SELECT id FROM languages WHERE name=?))", username, language);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public int removeUserSocial(String username, String socialName) {
+        try {
+            return jdbcTemplate.update("DELETE FROM socials_users WHERE username=? AND social_id=(select id from socials WHERE name=?)", username, socialName);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int removeUserLanguage(String username, String language) {
+        try {
+            return jdbcTemplate.update("DELETE FROM languages_users WHERE username=? AND language_id=(select id from languages WHERE name=?)", username,language);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
