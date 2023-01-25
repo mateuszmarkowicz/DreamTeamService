@@ -21,10 +21,17 @@ public class GamesController {
         return gamesRepository.getGames();
     }
 
+
     @GetMapping("/{username}")
     public List<GamesForUser> getUserGames(@PathVariable("username") String username){
         return gamesRepository.getUserGames(username);
     }
+
+    @GetMapping("/users/{id}")
+    public List<String> getGameUsers(@PathVariable("id") int id){
+        return gamesRepository.getGameUsers(id);
+    }
+
 
     @PostMapping("/{username}")
     public boolean addUserGame(@PathVariable("username") String username, @RequestBody GamesForUser gamesForUser, HttpServletResponse response){
@@ -59,4 +66,6 @@ public class GamesController {
             return false;
         }
     }
+
+
 }
