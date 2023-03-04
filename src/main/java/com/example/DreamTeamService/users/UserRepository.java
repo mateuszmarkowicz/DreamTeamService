@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class UserRepository {
     @Autowired
@@ -57,6 +59,19 @@ public class UserRepository {
 //            System.out.println(e);
 //        }
         return  userData;
+    }
+
+    public List<Review> getReviews(String username){
+       return jdbcTemplate.query("SELECT * FROM reviews WHERE reviewed=?", BeanPropertyRowMapper.newInstance((Review.class)), username);
+    }
+    public boolean addReview(Review review, String reviewer) {
+        try {
+            jdbcTemplate.update("INSERT INTO reviews(reviewer, reviewed, rating, comment) VALUES (?,?,?,?)", reviewer,review.getReviewed(),review.getRating(), review.getComment());
+            return true;
+        }catch (Exception e){
+            System.out.println(e);
+            return false;
+        }
     }
 
     public boolean updateUserEmail(String username, String email){
@@ -116,6 +131,14 @@ public class UserRepository {
     public int removeUserLanguage(String username, String language) {
         try {
             return jdbcTemplate.update("DELETE FROM languages_users WHERE username=? AND language_id=(select id from languages WHERE name=?)", username,language);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int removeReview(String username, String reviewer) {
+        try {
+            return jdbcTemplate.update("DELETE FROM reviews WHERE reviewer=? AND  reviewed=?", reviewer, username);
         } catch (Exception e) {
             return 0;
         }

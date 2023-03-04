@@ -65,6 +65,10 @@ public class UserController {
         return userRepository.getUserData(username);
     }
 
+    @GetMapping("/users/reviews/{username}")
+    public List<Review> getReviews(@PathVariable("username") String username){
+        return userRepository.getReviews(username);
+    }
     @PatchMapping("/users/emails/{username}")
     public boolean updateUserEmail(@PathVariable("username") String username, @RequestBody String email, HttpServletResponse response){
         Object tokenUsername = SecurityContextHolder.getContext().getAuthentication()
@@ -99,6 +103,23 @@ public class UserController {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
         }
+    }
+    @PostMapping("/users/reviews")
+    public boolean addReview(@RequestBody Review review, HttpServletResponse response){
+        Object tokenUsername = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String reviewer = tokenUsername.toString();
+        if(review.getReviewed().equals(reviewer)){
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return false;
+        }
+        boolean isReviewAdded =  userRepository.addReview(review, reviewer);
+        if(isReviewAdded) {
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            return true;
+        }
+        response.setStatus(HttpServletResponse.SC_CONFLICT);
+        return false;
     }
 
     @PostMapping("/users/socials/{username}")
@@ -205,6 +226,23 @@ public class UserController {
                 return false;
             }
 
+    }
+    @DeleteMapping("users/reviews/{username}")
+    public boolean removeReview(@PathVariable String username, HttpServletResponse response)
+    {
+        Object tokenUsername = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String reviewer = tokenUsername.toString();
+        if(username.equals(reviewer)){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return false;
+        }
+            int isRemoved = userRepository.removeReview(username, reviewer);
+            if(isRemoved==1) return true;
+            else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return false;
+            }
     }
 
     @GetMapping("test")
