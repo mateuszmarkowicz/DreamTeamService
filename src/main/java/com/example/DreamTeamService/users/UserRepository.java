@@ -33,6 +33,10 @@ public class UserRepository {
         return true;
     }
 
+    public List<String> getUsers() {
+        return jdbcTemplate.queryForList("SELECT username FROM users", (String.class));
+    }
+
     public UserData getUserData(String username) {
         UserData userData =  jdbcTemplate.queryForObject("SELECT username, email, description, date_of_birth FROM users WHERE username=?", BeanPropertyRowMapper.newInstance((UserData.class)), username);
         userData.setLanguages(jdbcTemplate.queryForList("SELECT l.name FROM users u INNER JOIN languages_users lu ON lu.username = u.username  INNER JOIN languages l ON lu.language_id=l.id WHERE u.username=?",String.class, username));

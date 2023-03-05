@@ -59,6 +59,10 @@ public class UserController {
             return false;
         }
     }
+    @GetMapping("/users")
+    List<String> getUsers(){
+        return userRepository.getUsers();
+    }
 
     @GetMapping("/users/{username}")
     public UserData getUserData(@PathVariable("username") String username){
@@ -69,6 +73,7 @@ public class UserController {
     public List<Review> getReviews(@PathVariable("username") String username){
         return userRepository.getReviews(username);
     }
+
     @PatchMapping("/users/emails/{username}")
     public boolean updateUserEmail(@PathVariable("username") String username, @RequestBody String email, HttpServletResponse response){
         Object tokenUsername = SecurityContextHolder.getContext().getAuthentication()
