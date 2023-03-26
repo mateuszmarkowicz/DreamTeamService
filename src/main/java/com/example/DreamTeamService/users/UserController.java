@@ -74,6 +74,11 @@ public class UserController {
         return userRepository.getReviews(username);
     }
 
+    @GetMapping("users/friends")
+    List<String> getFriendList(@RequestParam("username") String username, @RequestParam("status") String status){
+            return userRepository.getFriendList(username, status);
+    }
+
     @PatchMapping("/users/emails/{username}")
     public boolean updateUserEmail(@PathVariable("username") String username, @RequestBody String email, HttpServletResponse response){
         Object tokenUsername = SecurityContextHolder.getContext().getAuthentication()
@@ -109,6 +114,29 @@ public class UserController {
             return false;
         }
     }
+
+    @PatchMapping("users/friends")
+    public boolean updateFriendship(@RequestParam String username, @RequestParam String status, HttpServletResponse response) {
+        Object tokenUsername = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(Integer.parseInt(status)<0||Integer.parseInt(status)>2){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return false;
+        }
+        if (username.equals(tokenUsername)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return false;
+        } else {
+            boolean noConflict = userRepository.updateFriendship(tokenUsername.toString(), username, status);
+            if (noConflict) {
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
+            }
+            return noConflict;
+        }
+    }
+
     @PostMapping("/users/reviews")
     public boolean addReview(@RequestBody Review review, HttpServletResponse response){
         Object tokenUsername = SecurityContextHolder.getContext().getAuthentication()
@@ -158,6 +186,25 @@ public class UserController {
         }else{
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
+        }
+    }
+
+    @PostMapping("/users/friends/{username}")
+    public boolean inviteFriend(@PathVariable("username") String username, HttpServletResponse response){
+        Object tokenUsername = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(username.equals(tokenUsername)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return false;
+        }else {
+            boolean noConflict = userRepository.inviteFriend(tokenUsername.toString(), username);
+            if(noConflict){
+                response.setStatus(HttpServletResponse.SC_CREATED);
+            }
+            else{
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
+            }
+            return noConflict;
         }
     }
 

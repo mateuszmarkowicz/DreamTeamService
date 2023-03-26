@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,4 +17,6 @@ public class Review {
     private float rating;
     private String comment;
     private LocalDateTime publicationDate;
+
+    private List<String> attributes;
 }
