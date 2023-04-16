@@ -1,5 +1,6 @@
 package com.example.DreamTeamService.users;
 
+import com.example.DreamTeamService.games.GamesForUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -172,11 +173,20 @@ public class UserRepository {
         }
     }
 
-    public boolean updateFriendship(String userOne, String userTwo, String status) {
+    public boolean updateFriendship(String userRequest, String userAccept, String status) {
         try {
-            jdbcTemplate.update("UPDATE friendships SET status=? WHERE user_request LIKE ? AND user_accept LIKE ? OR user_accept LIKE ? AND user_request LIKE ?",status, userOne, userTwo, userTwo, userOne);
+            Friendship currentFriendship = jdbcTemplate.queryForObject(
+                   "SELECT user_request, user_accept, status FROM friendships WHERE user_request LIKE ? AND user_accept LIKE ? OR user_accept LIKE ? AND user_request LIKE ?",
+                    BeanPropertyRowMapper.newInstance((Friendship.class)), userRequest, userAccept, userRequest, userAccept);
+            if(currentFriendship.getStatus().equals("2") && !currentFriendship.getUserRequest().equals(userRequest)) return false;
+            if(currentFriendship.getStatus().equals("0") && currentFriendship.getUserRequest().equals(userRequest)) return false;
+            if(status.equals("2"))jdbcTemplate.update("UPDATE friendships SET user_request=?, user_accept=?, status=? WHERE user_request LIKE ? AND user_accept LIKE ? OR user_accept LIKE ? AND user_request LIKE ?",
+                    userRequest, userAccept, status, userRequest, userAccept, userRequest, userAccept);
+            else jdbcTemplate.update("UPDATE friendships SET status=? WHERE user_request LIKE ? AND user_accept LIKE ? OR user_accept LIKE ? AND user_request LIKE ?",
+                    status, userRequest, userAccept, userRequest, userAccept);
             return true;
         } catch (Exception e) {
+            System.out.println(e.toString());
             return false;
         }
     }
@@ -185,9 +195,13 @@ public class UserRepository {
         if(status.equals("0")){
             List<String> friendsList = jdbcTemplate.queryForList("SELECT user_request FROM friendships WHERE user_accept LIKE ? AND status LIKE ?", String.class, username, status);
             return friendsList;
-        }else {
+        }else if(status.equals("1")){
             List<String> friendsList = jdbcTemplate.queryForList("SELECT user_request FROM friendships WHERE user_accept LIKE ? AND status LIKE ? UNION SELECT user_accept FROM friendships WHERE user_request LIKE ? AND status LIKE ?", String.class, username, status, username, status);
             return friendsList;
+        }else if(status.equals("2")){
+            List<String> friendsList = jdbcTemplate.queryForList("SELECT user_accept FROM friendships WHERE user_request LIKE ? AND status LIKE ?", String.class, username, status);
+            return friendsList;
         }
+        return null;
     }
 }

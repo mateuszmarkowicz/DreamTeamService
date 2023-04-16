@@ -30,7 +30,6 @@
 			<artifactId>guava</artifactId>
 			<version>28.1-jre</version>
 		</dependency>
-
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
