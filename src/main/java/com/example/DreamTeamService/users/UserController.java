@@ -297,6 +297,15 @@ public class UserController {
             }
     }
 
+    //endpoint sluzocy do zmiany statusu aktywnosci uzytkownika(online/offline)
+    @PatchMapping("/users/{isOnline}")
+    public boolean changeStatus(@PathVariable boolean isOnline){
+        //pobranie nazwy uzytkownika z tokenu
+        Object user = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        return userRepository.changeStatus(user.toString(), isOnline);
+    }
+
     @GetMapping("test")
     public String userTest() {
         return "Test";

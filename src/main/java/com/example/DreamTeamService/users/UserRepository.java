@@ -204,4 +204,14 @@ public class UserRepository {
         }
         return null;
     }
+
+    //funkcja zmieniajaca status aktywnosci uzytkownika
+    public boolean changeStatus(String username, boolean isOnline) {
+        try{
+            jdbcTemplate.update("UPDATE users SET is_online=? WHERE username=?", isOnline, username);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
+    }
 }
